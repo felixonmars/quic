@@ -33,6 +33,8 @@ makeTestServerConfig = do
     return testServerConfig {
         scCredentials = credentials
       , scALPN        = Just chooseALPN
+      , scDebugLog    = Just "tmp/qlog/"
+      , scQLog        = Just "tmp/qlog/"
       }
 
 testServerConfig :: ServerConfig
@@ -49,6 +51,8 @@ makeTestServerConfigR = do
     return testServerConfigR {
         scCredentials = credentials
       , scALPN        = Just chooseALPN
+      , scDebugLog    = Just "tmp/qlog/"
+      , scQLog        = Just "tmp/qlog/"
       }
 
 testServerConfigR :: ServerConfig
@@ -64,6 +68,8 @@ testClientConfig = defaultClientConfig {
   , ccPortName   = "50003"
   , ccValidate   = False
   , ccDebugLog   = True
+  , ccQLog       = Just "tmp/qlog/client/"
+  , ccKeyLog     = \msg -> appendFile "tls_key.log" (msg ++ "\n")
   }
 
 testClientConfigR :: ClientConfig
@@ -72,13 +78,20 @@ testClientConfigR = defaultClientConfig {
   , ccPortName   = "50002"
   , ccValidate   = False
   , ccDebugLog   = True
+  , ccQLog       = Just "tmp/qlog/client/"
   }
 
 setServerQlog :: ServerConfig -> ServerConfig
-setServerQlog sc = sc
+setServerQlog sc = sc {
+    scDebugLog = Just "tmp/qlog/"
+  , scQLog     = Just "tmp/qlog/"
+  }
 
 setClientQlog :: ClientConfig -> ClientConfig
-setClientQlog cc = cc
+setClientQlog cc = cc {
+    ccDebugLog = True
+  , ccQLog     = Just "tmp/qlog/client/"
+  }
 
 data Scenario = Randomly Int
               | DropClientPacket [Int]
